@@ -1,0 +1,208 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  plus                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+scale 1;
+
+nx    100;
+ny    60;
+nz    120; 
+wllStch   3;
+
+R1   0.2190;
+R2   0.11;
+B    0.13;
+
+A    0.154856385079854 ; // cos(45)*R1
+
+L    0.5;
+
+
+x0    0;    
+ 
+x1    -$A;  
+x2    -$A;
+x3    -$R2; 
+x4    -$R2; 
+     
+x5    -$A;  
+x6    -$A;
+x7    -$R2; 
+x8    -$R2;
+
+x9     $A;  
+x10    $R2;
+
+x11    $A; 
+x12    $R2;
+
+x13    $R2;  
+x14    $A;
+
+x15    $R2; 
+x16    $A;
+
+
+  
+y0      0;
+y1    -$A;
+y2     $A;
+y3     $R2;
+y4    -$R2;
+
+
+y5    -$A;
+y6     $A;
+y7     $R2;
+y8    -$R2;
+
+
+y9     $A;
+y10    $R2;
+y11    $A;
+y12    $R2;
+
+
+y13    -$R2;
+y14    -$A;
+y15    -$R2;
+y16    -$A;
+
+
+
+
+z0    0;
+z1    -$L;
+
+
+
+
+
+
+vertices
+(
+    ($x0   $y0  $z0)  //  0
+    ($x1   $y1  $z0)  //  1
+    ($x2   $y2  $z0)  //  2
+    ($x3   $y3  $z0)  //  3
+    ($x4   $y4  $z0)  //  4
+    ($x5   $y5  $z1)  //  5
+    ($x6   $y6  $z1)  //  6
+    ($x7   $y7  $z1)  //  7
+    ($x8   $y8  $z1)  //  8
+
+//////////////////////////////////////////////
+
+    ($x9   $y9  $z0)  //  9
+    ($x10  $y10  $z0)  //  10
+    ($x11  $y11  $z1)  //  11
+    ($x12  $y12  $z1)  //  12
+    ($x13  $y13  $z0)  //  13
+    ($x14  $y14  $z0)  //  14
+    ($x15  $y15  $z1)  //  15
+    ($x16  $y16  $z1)  //  16
+    
+);
+
+blocks
+(
+
+    hex (1  2  3  4  5 6 7 8) ($nx $ny $nz) simpleGrading (1 $wllStch 1)    // 0
+    hex (2 9 10 3 6 11 12 7) ($nx $ny $nz) simpleGrading (1 $wllStch 1)    // 0
+    
+    hex (9 14 13 10 11 16 15 12) ($nx $ny $nz) simpleGrading (1 $wllStch 1)    // 0
+    hex (14 1 4 13 16 5 8 15) ($nx $ny $nz) simpleGrading (1 $wllStch 1)    // 0
+    
+    hex (4 3 10 13 8 7 12 15) ($nx $nx $nz) simpleGrading (1 1 1)    // 0
+
+
+);
+
+edges
+(
+arc 1 2    (-$R1  0  $z0)
+arc 5 6    (-$R1  0  $z1)
+
+arc 2 9    (0  $R1  $z0)
+arc 11 6   (0  $R1  $z1)
+
+arc 9 14   ($R1  0  $z0)
+arc 11 16  ($R1  0  $z1)
+
+arc 14 1   (0  -$R1  $z0)
+arc 16 5   (0  -$R1  $z1)
+
+
+// inner arcs
+
+arc 3 4   (-$B  0  $z0)
+arc 8 7   (-$B  0  $z1)
+
+arc 3 10   (0 $B  $z0)
+arc 7 12   (0 $B  $z1)
+
+arc 10 13   ($B  0  $z0)
+arc 12 15   ($B  0  $z1)
+
+arc 4 13   (0 -$B  $z0)
+arc 8 15   (0 -$B  $z1)
+
+);
+
+boundary
+(
+
+
+
+    wall
+    {
+        type wall;
+        faces
+        (
+	(1 2 6 5)
+	(2 9 11 6)
+	(9 14 16 11)
+	(14 1 5 16)
+	
+	// front
+	(1 2 3 4)
+        (2 9 10 3)
+        (10 9 14 13)
+        (13 14 1 4)
+        (4 3 10 13)
+        
+        // Back 
+        
+        (5 8 7 6)
+	(7 12 11 6)
+	(12 15 16 11)
+	(8 5 16 15)
+	(7 8 15 12)
+        
+
+        );
+    }
+
+   
+
+
+
+);
+
+mergePatchPairs
+(
+);
+

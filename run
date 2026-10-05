@@ -1,0 +1,47 @@
+#!/bin/bash
+#SBATCH --job-name=50_10_12_3D_G3
+#SBATCH --nodes=4
+#SBATCH --tasks-per-node=128
+#SBATCH --cpus-per-task=1
+#SBATCH --time=24:00:00
+
+# Replace [budget code] below with your project code (e.g. t01)
+##SBATCH --account=c01-eng 
+#SBATCH --account=e773-CoSeC
+#SBATCH --partition=standard
+#SBATCH --qos=standard
+##SBATCH --qos=lowpriority
+
+# Setup the job environment (this module needs to be loaded before any other modules)
+#module load epcc-job-env
+
+pwd; hostname; date
+#ls -ltr
+cd ${RUNDIR}
+#
+
+module load PrgEnv-gnu
+#module load scotch
+module load gsl
+
+source /work/e773/e773/omah_wsi/codes/OpenFOAM/OpenFOAM-v2506/etc/bashrc 
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions
+
+
+np=512
+sed -i "s/^numberOfSubdomains [0-9]*;/numberOfSubdomains $np;/" ./system/decomposeParDict
+rm -rf 0 pr* po* interfaceArea.dat; foamListTimes -rm;
+blockMesh
+restore0Dir
+setFields
+initAlphaField
+decomposePar -force
+
+
+srun  -n $np interFlow -parallel > LOG 
+
+
+
+
+
+

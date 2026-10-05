@@ -1,0 +1,22 @@
+#!/bin/bash
+
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+touch foam.foam
+np=4
+sed -i "s/^numberOfSubdomains [0-9]*;/numberOfSubdomains $np;/" ./system/fluid/decomposeParDict
+cp ./system/fluid/decomposeParDict ./system 
+
+rm -rf 0 pr* po* interfaceArea.dat; foamListTimes -rm;
+#blockMesh
+blockMesh 
+restore0Dir
+setFields  
+initAlphaField 
+#setExprFields -region fluid
+decomposePar -force 
+
+
+#multiRegionPhaseChangeFlow
+
+mpirun  -n $np interFlow -parallel #> log.multiRegionPhaseChangeFlow  
