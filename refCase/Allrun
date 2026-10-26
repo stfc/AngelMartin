@@ -12,7 +12,8 @@ rm -rf 0 pr* po* interfaceArea.dat; foamListTimes -rm;
 blockMesh 
 restore0Dir
 setFields  
-initAlphaField 
+#initAlphaField
+setAlphaField -dict system/initAlphaFieldDict
 #setExprFields -region fluid
 decomposePar -force 
 
